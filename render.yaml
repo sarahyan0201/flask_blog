@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: flask-blog
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn myblog.app:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        value: "d109a20770c9b0e2acdf0f81e81ee96c440f69b4cea2bfd3"
