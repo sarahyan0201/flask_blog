@@ -41,12 +41,12 @@ with app.app_context():
         admin = User(
             username="admin",
             email="admin@example.com", 
-            password=generate_password_hash("admin123"),
+            password=generate_password_hash("AS@feP@ssw0rd2025!"),
             is_admin=True
         )
         db.session.add(admin)
         db.session.commit()
-        print("Admin 帳號已建立（admin / admin123）")
+        print("Admin 帳號已建立（admin / AS@feP@ssw0rd2025!）")
 
 # 路由設定
 @app.route("/")
