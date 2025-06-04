@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>使用者管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f4ef;
+            font-family: 'Noto Sans TC', sans-serif;
+            color: #4e4e4e;
+        }
+
+        h2 {
+            font-weight: 700;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .table-container {
+            max-width: 1000px;
+            margin: 2rem auto;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        table {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            word-break: break-word;
+        }
+
+        th {
+            text-align: center;
+            white-space: pre-line;
+        }
+
+        td {
+            word-break: break-all;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>已註冊使用者列表<br>Registered User List</h2>
+
+        {% if current_user.username == 'admin' %}
+        <div class="table-container">
+            <table class="table table-striped mt-4">
+                <thead class="table-secondary">
+                    <tr>
+                        <th style="width: 20%;">使用者名稱<br>Username</th>
+                        <th style="width: 60%;">密碼加密<br>Encrypted Password</th>
+                        <th style="width: 20%;">刪除<br>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.password }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('auth.delete_user', user_id=user.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('確定要刪除此使用者嗎？Are you sure you want to delete this user?')">
+                                    刪除
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+            <div class="alert alert-danger text-center mt-5">
+                非管理員無法查看此頁面。Access denied: Admin only.
+            </div>
+        {% endif %}
+
+        <div class="text-end mt-3">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">返回首頁<br>Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
