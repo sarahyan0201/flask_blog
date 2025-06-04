@@ -23,6 +23,7 @@ def load_user(user_id):
 # 資料庫設定
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, "..", "instance", "blog.db")
+os.makedirs(os.path.dirname(db_path), exist_ok=True)  # <== 確保資料夾存在
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
