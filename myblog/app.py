@@ -23,12 +23,19 @@ def load_user(user_id):
 # 資料庫設定
 basedir = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(basedir, "..", "instance", "blog.db")
-os.makedirs(os.path.dirname(db_path), exist_ok=True)  # <== 確保資料夾存在
+os.makedirs(os.path.dirname(db_path), exist_ok=True)  # 確保資料夾存在
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 migrate = Migrate(app, db)
+
+# 掛載 Blueprint
+app.register_blueprint(auth_blueprint, url_prefix='/auth')
+
+# ✅ 無論本地或 Render，都會建立資料表
+with app.app_context():
+    db.create_all()
 
 # 路由設定
 @app.route("/")
@@ -70,11 +77,6 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for("index"))
 
-# 掛載 Blueprint
-app.register_blueprint(auth_blueprint, url_prefix='/auth')
-
-# 本地執行時才會啟動
+# 本地執行才會啟動伺服器
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
     app.run(host="0.0.0.0", port=10000)
