@@ -27,7 +27,7 @@ with app.app_context():
     migrate(message="Fresh start with is_admin")
     upgrade()
 
-    print("👑 Creating admin user...")
+    print(" Creating admin user")
     hashed_password = generate_password_hash("admin123")
     admin = User(username="admin", password=hashed_password, is_admin=True)
     db.session.add(admin)

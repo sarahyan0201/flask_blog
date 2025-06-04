@@ -5,6 +5,7 @@ from .db import db
 from .auth.models import User, Post
 from flask_migrate import Migrate
 from .auth import auth as auth_blueprint
+from werkzeug.security import generate_password_hash  
 import os
 
 app = Flask(__name__)
@@ -33,9 +34,19 @@ migrate = Migrate(app, db)
 # 掛載 Blueprint
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
-# ✅ 無論本地或 Render，都會建立資料表
+# 建立資料表 + 自動建立 admin 帳號（如果不存在）
 with app.app_context():
     db.create_all()
+    if not User.query.filter_by(username="admin").first():
+        admin = User(
+            username="admin",
+            email="admin@example.com"
+            password=generate_password_hash("admin123"),
+            is_admin=True
+        )
+        db.session.add(admin)
+        db.session.commit()
+        print("Admin 帳號已建立（admin / admin123）")
 
 # 路由設定
 @app.route("/")
@@ -77,6 +88,6 @@ def delete_post(post_id):
     db.session.commit()
     return redirect(url_for("index"))
 
-# 本地執行才會啟動伺服器
+# 地端執行才會啟動伺服器
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
