@@ -1,12 +1,11 @@
-import sys, os
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-
-from myblog.db import db
 from flask import Flask, render_template, request, redirect, url_for 
 from flask_login import UserMixin, LoginManager, login_required
 from datetime import timedelta
-from myblog.auth.models import User, Post  # 從 myblog.models 匯入 User 和 Post
+from .db import db
+from .auth.models import User, Post
 from flask_migrate import Migrate
+from .auth import auth as auth_blueprint
+import os
 
 app = Flask(__name__)
 app.secret_key = "myblog-super-secret-key"
@@ -22,7 +21,9 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 # 資料庫設定
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///C:/Users/sarah/Python_Project_Based_Learning/sarahblog/instance/blog.db'
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(basedir, "..", "instance", "blog.db")
+app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -69,10 +70,9 @@ def delete_post(post_id):
     return redirect(url_for("index"))
 
 # 掛載 Blueprint
-from myblog.auth import auth as auth_blueprint
 app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
-# 啟動應用
+# 本地執行時才會啟動
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
