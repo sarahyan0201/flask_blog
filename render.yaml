@@ -3,6 +3,7 @@ services:
     name: flask-blog
     env: python
     buildCommand: "pip install -r requirements.txt"
+  # 修正 gunicorn 匯入問題
     startCommand: "gunicorn myblog.app:app"
     workingDirectory: .
     envVars:
